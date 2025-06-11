@@ -11,6 +11,7 @@ pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
     let navigation_items = [
         "Home",
         "Settings",
+        "Local LLMs",
         "About",
         "Help",
     ];
