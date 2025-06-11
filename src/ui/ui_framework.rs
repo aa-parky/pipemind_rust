@@ -1,25 +1,16 @@
 use ratatui::{
-    layout::{Constraint, Direction, Layout},
+    backend::Backend,
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Style},
-    widgets::{Block, Borders, Paragraph},
+    text::Span,
+    widgets::{Block, Borders, Clear, Paragraph, Wrap},
     Frame,
 };
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FocusArea {
-    Header,
-    Navigation,
-    Preview,
-    Input,
-    Footer,
-}
-
-pub struct AppState {
-    pub focus: FocusArea,
-}
+use crate::core::app_state::{AppState, FocusArea};
 
 pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
-    let area = f.area();
+    let area = f.size();
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -64,7 +55,7 @@ pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
         .border_style(border_color(app_state, FocusArea::Preview));
     f.render_widget(preview, content_chunks[0]);
 
-    let input = Paragraph::new("input")
+    let input = Paragraph::new(app_state.input_buffer.as_str())
         .block(Block::default()
             .borders(Borders::ALL)
             .border_style(border_color(app_state, FocusArea::Input)));
@@ -75,6 +66,18 @@ pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
             .borders(Borders::ALL)
             .border_style(border_color(app_state, FocusArea::Footer)));
     f.render_widget(footer, chunks[2]);
+
+    if app_state.show_quit_modal {
+        let popup_area = centered_rect(40, 20, f.size());
+        let popup = Paragraph::new("Quit Pipemind? (y/n)")
+            .style(Style::default().fg(Color::Red))
+            .alignment(Alignment::Center)
+            .wrap(Wrap { trim: true })
+            .block(Block::default().borders(Borders::ALL).title("Confirm Exit"));
+
+        f.render_widget(Clear, popup_area);
+        f.render_widget(popup, popup_area);
+    }
 }
 
 fn border_color(app_state: &AppState, area: FocusArea) -> Style {
@@ -83,4 +86,24 @@ fn border_color(app_state: &AppState, area: FocusArea) -> Style {
     } else {
         Style::default().fg(Color::DarkGray)
     }
+}
+
+fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+    let popup_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Percentage((100 - percent_y) / 2),
+            Constraint::Percentage(percent_y),
+            Constraint::Percentage((100 - percent_y) / 2),
+        ])
+        .split(r);
+
+    Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage((100 - percent_x) / 2),
+            Constraint::Percentage(percent_x),
+            Constraint::Percentage((100 - percent_x) / 2),
+        ])
+        .split(popup_layout[1])[1]
 }

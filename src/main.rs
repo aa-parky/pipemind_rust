@@ -1,9 +1,17 @@
 use std::io;
-use crossterm::{event::{self, Event, KeyCode}, terminal, ExecutableCommand};
+use crossterm::{
+    event::{self, Event, KeyCode, KeyModifiers},
+    terminal,
+    ExecutableCommand,
+};
 use ratatui::{backend::CrosstermBackend, Terminal};
 
 mod ui;
-use ui::ui_framework::{draw_ui, AppState, FocusArea};
+mod core;
+
+use ui::ui_framework::draw_ui;
+use core::app_state::{AppState, FocusArea};
+use core::input::handle_key_event;
 
 fn main() -> Result<(), io::Error> {
     terminal::enable_raw_mode()?;
@@ -12,7 +20,7 @@ fn main() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut app_state = AppState { focus: FocusArea::Navigation };
+    let mut app_state = AppState::default();
 
     loop {
         terminal.draw(|f| draw_ui(f, &app_state))?;
@@ -20,13 +28,25 @@ fn main() -> Result<(), io::Error> {
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
                 match key.code {
-                    KeyCode::Char('q') => break,
+                    KeyCode::Char('q') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                        app_state.show_quit_modal = true;
+                    }
+                    KeyCode::Char('y') if app_state.show_quit_modal => {
+                        break;
+                    }
+                    KeyCode::Char('n') if app_state.show_quit_modal => {
+                        app_state.show_quit_modal = false;
+                    }
                     KeyCode::Char('1') => app_state.focus = FocusArea::Header,
                     KeyCode::Char('2') => app_state.focus = FocusArea::Navigation,
                     KeyCode::Char('3') => app_state.focus = FocusArea::Preview,
                     KeyCode::Char('4') => app_state.focus = FocusArea::Input,
                     KeyCode::Char('5') => app_state.focus = FocusArea::Footer,
-                    _ => {}
+                    _ => {
+                        if app_state.focus == FocusArea::Input {
+                            handle_key_event(&mut app_state, &key);
+                        }
+                    }
                 }
             }
         }
