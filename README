@@ -1,0 +1,60 @@
+Pipemind 🧠⚙️
+
+Pipemind is a terminal-based creative and tooling interface built with Rust. It merges whimsical storytelling flair with robust UI design, aimed at writers, developers, and goblins alike.
+
+⸻
+
+✨ Features
+	•	Modular terminal UI using ratatui and crossterm
+	•	Clear layout: Header, Navigation, Preview, Input, Footer
+	•	Keyboard-driven interface with focus switching
+	•	Color-coded borders for visual focus indication
+	•	Git-tracked from the first keystroke — a clean foundation for the madness to come
+
+⸻
+
+🧠 Vision
+
+Pipemind is the interface to your creative subconscious — or at least, your writing tools and procedural generation pipelines. Future versions will support:
+	•	Dynamic text input and tagging
+	•	Prompt engineering workflows
+	•	Integration with AI tools (ComfyUI, Flux, etc.)
+	•	Scene generation, asset linking, and reactive fiction tooling
+	•	Creative UI extensions via plugin modules
+
+⸻
+
+🛠 Tech Stack
+	•	Rust
+	•	ratatui
+	•	crossterm
+
+⸻
+
+🚀 Getting Started
+
+git clone https://github.com/aa-parky/pipemind_rust.git
+cd pipemind_rust
+cargo run
+
+Controls:
+	•	1 – Focus Header
+	•	2 – Focus Navigation
+	•	3 – Focus Preview
+	•	4 – Focus Input
+	•	5 – Focus Footer
+	•	q – Quit
+
+⸻
+
+📜 License
+
+Licensed under the GNU General Public License v3.0. See the LICENSE file for details.
+
+⸻
+
+🧙 Author
+
+Crafted by @aa-parky, with occasional outbursts from a goblin assistant and the ever-watchful Mistress of Mayhem.
+
+“Don’t fear the terminal. It fears you.”
