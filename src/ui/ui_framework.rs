@@ -6,8 +6,9 @@ use ratatui::{
 };
 
 use crate::core::app_state::{AppState, FocusArea};
+use crate::ui::navigation::draw_navigation;
 
-pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
+pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
     let area = f.area();
     let _popup_area = centered_rect(40, 20, f.area());
 
@@ -34,11 +35,7 @@ pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
         ])
         .split(chunks[1]);
 
-    let nav = Block::default()
-        .title("Navigation")
-        .borders(Borders::ALL)
-        .border_style(border_color(app_state, FocusArea::Navigation));
-    f.render_widget(nav, body_chunks[0]);
+    draw_navigation(f, app_state, body_chunks[0]);
 
     let content_chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -106,3 +103,5 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         ])
         .split(popup_layout[1])[1]
 }
+
+
