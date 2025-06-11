@@ -1,3 +1,4 @@
+
 use std::io;
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
@@ -38,66 +39,71 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Char('n') if app_state.show_quit_modal => {
                         app_state.show_quit_modal = false;
                     }
-                    KeyCode::Char('1') => app_state.focus = FocusArea::Header,
-                    KeyCode::Char('2') => app_state.focus = FocusArea::Navigation,
-                    KeyCode::Char('3') => app_state.focus = FocusArea::Preview,
-                    KeyCode::Char('4') => app_state.focus = FocusArea::Input,
-                    KeyCode::Char('5') => app_state.focus = FocusArea::Footer,
-                    _ => { /* Fall through to specific focus area handling */ }
-                }
-
-                // Handle keybindings specific to focus area
-                if app_state.focus == FocusArea::Input {
-                    // If input area is focused, all character keys should be handled as input
-                    handle_key_event(&mut app_state, &key);
-                } else {
-                    // Handle hjkl for navigation outside input area
-                    match key.code {
-                        KeyCode::Char('h') => {
-                            app_state.focus = match app_state.focus {
-                                FocusArea::Header => FocusArea::Footer,
-                                FocusArea::Navigation => FocusArea::Header,
-                                FocusArea::Preview => FocusArea::Navigation,
-                                FocusArea::Footer => FocusArea::Preview,
-                                _ => app_state.focus,
-                            };
+                    KeyCode::F(n) => {
+                        match n {
+                            1 => app_state.focus = FocusArea::Header,
+                            2 => app_state.focus = FocusArea::Navigation,
+                            3 => app_state.focus = FocusArea::Preview,
+                            4 => app_state.focus = FocusArea::Input,
+                            5 => app_state.focus = FocusArea::Footer,
+                            _ => {}
                         }
-                        KeyCode::Char('l') => {
-                            app_state.focus = match app_state.focus {
-                                FocusArea::Header => FocusArea::Navigation,
-                                FocusArea::Navigation => FocusArea::Preview,
-                                FocusArea::Preview => FocusArea::Footer,
-                                FocusArea::Footer => FocusArea::Header,
-                                _ => app_state.focus,
-                            };
-                        }
-                        KeyCode::Char('j') => {
-                            if app_state.focus == FocusArea::Navigation {
-                                app_state.selected_navigation_item = (app_state.selected_navigation_item + 1).min(3);
-                            } else {
-                                app_state.focus = match app_state.focus {
-                                    FocusArea::Header => FocusArea::Navigation,
-                                    FocusArea::Navigation => FocusArea::Preview,
-                                    FocusArea::Preview => FocusArea::Footer,
-                                    FocusArea::Footer => FocusArea::Header,
-                                    _ => app_state.focus,
-                                };
+                    }
+                    _ => {
+                        // Handle keybindings specific to focus area
+                        if app_state.focus == FocusArea::Input {
+                            // If input area is focused, all character keys should be handled as input
+                            handle_key_event(&mut app_state, &key);
+                        } else {
+                            // Handle hjkl for navigation outside input area
+                            match key.code {
+                                KeyCode::Char('h') => {
+                                    app_state.focus = match app_state.focus {
+                                        FocusArea::Header => FocusArea::Footer,
+                                        FocusArea::Navigation => FocusArea::Header,
+                                        FocusArea::Preview => FocusArea::Navigation,
+                                        FocusArea::Footer => FocusArea::Preview,
+                                        _ => app_state.focus,
+                                    };
+                                }
+                                KeyCode::Char('l') => {
+                                    app_state.focus = match app_state.focus {
+                                        FocusArea::Header => FocusArea::Navigation,
+                                        FocusArea::Navigation => FocusArea::Preview,
+                                        FocusArea::Preview => FocusArea::Footer,
+                                        FocusArea::Footer => FocusArea::Header,
+                                        _ => app_state.focus,
+                                    };
+                                }
+                                KeyCode::Char('j') => {
+                                    if app_state.focus == FocusArea::Navigation {
+                                        app_state.selected_navigation_item = (app_state.selected_navigation_item + 1).min(3);
+                                    } else {
+                                        app_state.focus = match app_state.focus {
+                                            FocusArea::Header => FocusArea::Navigation,
+                                            FocusArea::Navigation => FocusArea::Preview,
+                                            FocusArea::Preview => FocusArea::Footer,
+                                            FocusArea::Footer => FocusArea::Header,
+                                            _ => app_state.focus,
+                                        };
+                                    }
+                                }
+                                KeyCode::Char('k') => {
+                                    if app_state.focus == FocusArea::Navigation {
+                                        app_state.selected_navigation_item = app_state.selected_navigation_item.saturating_sub(1);
+                                    } else {
+                                        app_state.focus = match app_state.focus {
+                                            FocusArea::Header => FocusArea::Footer,
+                                            FocusArea::Navigation => FocusArea::Header,
+                                            FocusArea::Preview => FocusArea::Navigation,
+                                            FocusArea::Footer => FocusArea::Preview,
+                                            _ => app_state.focus,
+                                        };
+                                    }
+                                }
+                                _ => {}
                             }
                         }
-                        KeyCode::Char('k') => {
-                            if app_state.focus == FocusArea::Navigation {
-                                app_state.selected_navigation_item = app_state.selected_navigation_item.saturating_sub(1);
-                            } else {
-                                app_state.focus = match app_state.focus {
-                                    FocusArea::Header => FocusArea::Footer,
-                                    FocusArea::Navigation => FocusArea::Header,
-                                    FocusArea::Preview => FocusArea::Navigation,
-                                    FocusArea::Footer => FocusArea::Preview,
-                                    _ => app_state.focus,
-                                };
-                            }
-                        }
-                        _ => { /* Do nothing for other keys when not in input mode */ }
                     }
                 }
             }
@@ -108,5 +114,3 @@ fn main() -> Result<(), io::Error> {
     io::stdout().execute(terminal::LeaveAlternateScreen)?;
     Ok(())
 }
-
-
