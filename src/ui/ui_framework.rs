@@ -1,8 +1,6 @@
 use ratatui::{
-    backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Style},
-    text::Span,
     widgets::{Block, Borders, Clear, Paragraph, Wrap},
     Frame,
 };
@@ -10,7 +8,8 @@ use ratatui::{
 use crate::core::app_state::{AppState, FocusArea};
 
 pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
-    let area = f.size();
+    let area = f.area();
+    let _popup_area = centered_rect(40, 20, f.area());
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -68,7 +67,7 @@ pub fn draw_ui(f: &mut Frame, app_state: &AppState) {
     f.render_widget(footer, chunks[2]);
 
     if app_state.show_quit_modal {
-        let popup_area = centered_rect(40, 20, f.size());
+        let popup_area = centered_rect(40, 20, f.area());
         let popup = Paragraph::new("Quit Pipemind? (y/n)")
             .style(Style::default().fg(Color::Red))
             .alignment(Alignment::Center)
