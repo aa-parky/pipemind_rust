@@ -7,12 +7,13 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 
-mod ui;
-mod core;
-
-use ui::ui_framework::draw_ui;
-use core::app_state::{AppState, FocusArea};
-use core::input::handle_key_event;
+use pipemind_rust::{
+    core::{
+        app_state::{AppState, FocusArea},
+        input::handle_key_event,
+    },
+    ui::ui_framework::draw_ui,
+};
 
 /// Handles the terminal setup and cleanup
 struct TerminalManager {
@@ -104,9 +105,14 @@ impl TerminalManager {
             }
             KeyCode::Char('j') => {
                 if app_state.has_focus(FocusArea::Navigation) {
-                    app_state.select_navigation_item(
-                        app_state.selected_navigation_item + 1
-                    );
+                    let current_count = app_state.get_current_navigation_count();
+                    let current_index = app_state.get_current_selection_index();
+                    let next_index = if current_index + 1 < current_count {
+                        current_index + 1
+                    } else {
+                        current_index
+                    };
+                    app_state.select_navigation_item(next_index);
                 } else {
                     let new_focus = match app_state.focus {
                         FocusArea::Header => FocusArea::Navigation,
@@ -120,10 +126,9 @@ impl TerminalManager {
             }
             KeyCode::Char('k') => {
                 if app_state.has_focus(FocusArea::Navigation) {
-                    if app_state.selected_navigation_item > 0 {
-                        app_state.select_navigation_item(
-                            app_state.selected_navigation_item - 1
-                        );
+                    let current_index = app_state.get_current_selection_index();
+                    if current_index > 0 {
+                        app_state.select_navigation_item(current_index - 1);
                     }
                 } else {
                     let new_focus = match app_state.focus {
@@ -134,6 +139,24 @@ impl TerminalManager {
                         FocusArea::Input => app_state.focus,
                     };
                     app_state.set_focus(new_focus);
+                }
+            }
+            KeyCode::Enter => {
+                if app_state.has_focus(FocusArea::Navigation) {
+                    if app_state.is_in_submenu() {
+                        let current_index = app_state.get_current_selection_index();
+                        if current_index == 0 {  // If "Home" is selected in submenu
+                            app_state.exit_submenu();
+                        }
+                        // Add handling for other submenu items here if needed
+                    } else {
+                        app_state.enter_submenu();
+                    }
+                }
+            }
+            KeyCode::Esc => {
+                if app_state.has_focus(FocusArea::Navigation) {
+                    app_state.exit_submenu();
                 }
             }
             _ => {}

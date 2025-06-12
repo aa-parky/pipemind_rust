@@ -1,3 +1,4 @@
+
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Style},
@@ -5,13 +6,18 @@ use ratatui::{
     Frame,
 };
 
-use crate::core::app_state::AppState;
-use crate::ui::header::render_header;
-use crate::ui::footer::render_footer;
-use crate::ui::input::render_input;
-use crate::ui::navigation::draw_navigation;
-use crate::ui::preview::render_preview;
-use crate::ui::utils::{centered_rect, create_modal_block};
+use crate::{
+    core::app_state::{AppState, NavigationState},
+    features::image_tools::views::render_image_tools_view,
+    ui::{
+        header::render_header,
+        footer::render_footer,
+        input::render_input,
+        navigation::draw_navigation,
+        preview::render_preview,
+        utils::{centered_rect, create_modal_block},
+    },
+};
 
 pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
     let area = f.area();
@@ -50,8 +56,21 @@ pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
         ])
         .split(body_chunks[1]);
 
-    // Render preview
-    render_preview(f, content_chunks[0], app_state);
+    // Render main content area based on navigation state
+    match app_state.navigation_state {
+        NavigationState::Main if app_state.selected_navigation_item == 1 => {
+            // Index 1 is "Image Tools" in the main menu
+            render_image_tools_view(f, content_chunks[0], app_state);
+        }
+        NavigationState::Submenu { parent_index: 1 } => {
+            // We're in the Image Tools submenu
+            render_image_tools_view(f, content_chunks[0], app_state);
+        }
+        _ => {
+            // Default preview for other sections
+            render_preview(f, content_chunks[0], app_state);
+        }
+    }
 
     // Render input with cursor support
     render_input(f, content_chunks[1], app_state);

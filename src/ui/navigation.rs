@@ -8,30 +8,35 @@ use ratatui::{
 use crate::core::app_state::{AppState, FocusArea};
 
 pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
-    let navigation_items = [
-        "Home",
-        "Image Tools",
-        "Settings",
-        "Local LLMs",
-        "Help",
-        "About",
-    ];
+    // Get current navigation items based on state
+    let navigation_items = app_state.get_current_navigation_items();
 
     let items: Vec<ListItem> = navigation_items
         .iter()
-        .map(|i| ListItem::new(*i))
+        .map(|item| ListItem::new(item.as_str()))
         .collect();
 
     let mut list_state = ListState::default();
-         if app_state.has_focus(FocusArea::Navigation) {
-        list_state.select(Some(app_state.selected_navigation_item));
+    if app_state.has_focus(FocusArea::Navigation) {
+        list_state.select(Some(app_state.get_current_selection_index()));
     }
+
+    // Set title based on navigation state
+    let title = if app_state.is_in_submenu() {
+        if let crate::core::app_state::NavigationState::Submenu { parent_index } = &app_state.navigation_state {
+            format!("Navigation - {}", app_state.navigation_items[*parent_index].name)
+        } else {
+            "Navigation".to_string()
+        }
+    } else {
+        "Navigation".to_string()
+    };
 
     let nav_list = List::new(items)
         .block(Block::default()
-            .title("Navigation")
+            .title(title)
             .borders(Borders::ALL)
-            .border_style(     if app_state.has_focus(FocusArea::Navigation) {
+            .border_style(if app_state.has_focus(FocusArea::Navigation) {
                 Style::default().fg(Color::White)
             } else {
                 Style::default().fg(Color::DarkGray)
