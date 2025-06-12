@@ -1,4 +1,3 @@
-
 use std::io;
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
@@ -11,7 +10,7 @@ mod ui;
 mod core;
 
 use ui::ui_framework::draw_ui;
-use core::app_state::{AppState, FocusArea};
+use core::app_state::{AppState, FocusArea, NAVIGATION_ITEMS_COUNT};
 use core::input::handle_key_event;
 
 fn main() -> Result<(), io::Error> {
@@ -77,7 +76,8 @@ fn main() -> Result<(), io::Error> {
                                 }
                                 KeyCode::Char('j') => {
                                     if app_state.focus == FocusArea::Navigation {
-                                        app_state.selected_navigation_item = (app_state.selected_navigation_item + 1).min(3);
+                                        app_state.selected_navigation_item = 
+                                            (app_state.selected_navigation_item + 1).min(NAVIGATION_ITEMS_COUNT - 1);
                                     } else {
                                         app_state.focus = match app_state.focus {
                                             FocusArea::Header => FocusArea::Navigation,
@@ -90,7 +90,8 @@ fn main() -> Result<(), io::Error> {
                                 }
                                 KeyCode::Char('k') => {
                                     if app_state.focus == FocusArea::Navigation {
-                                        app_state.selected_navigation_item = app_state.selected_navigation_item.saturating_sub(1);
+                                        app_state.selected_navigation_item = 
+                                            app_state.selected_navigation_item.saturating_sub(1);
                                     } else {
                                         app_state.focus = match app_state.focus {
                                             FocusArea::Header => FocusArea::Footer,

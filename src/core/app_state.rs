@@ -17,6 +17,8 @@ pub struct AppState {
     pub is_command_mode: bool,
 }
 
+pub const NAVIGATION_ITEMS_COUNT: usize = 5;  // or however many items you have
+
 impl Default for AppState {
     fn default() -> Self {
         Self {

@@ -12,8 +12,8 @@ pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
         "Home",
         "Settings",
         "Local LLMs",
-        "About",
         "Help",
+        "About",
     ];
 
     let items: Vec<ListItem> = navigation_items
