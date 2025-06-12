@@ -4,6 +4,8 @@ use ratatui::{
     widgets::{Block, Borders, Clear, Paragraph, Wrap},
     Frame,
 };
+use crate::ui::preview::render_preview;
+
 
 use crate::core::app_state::{AppState, FocusArea};
 use crate::ui::navigation::draw_navigation;
@@ -45,14 +47,11 @@ pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
         ])
         .split(body_chunks[1]);
 
-    let preview = Block::default()
-        .title("Preview")
-        .borders(Borders::ALL)
-        .border_style(border_color(app_state, FocusArea::Preview));
-    f.render_widget(preview, content_chunks[0]);
+    render_preview(f, content_chunks[0], app_state);
 
     let input = Paragraph::new(app_state.input_buffer.as_str())
         .block(Block::default()
+            .title("Input")
             .borders(Borders::ALL)
             .border_style(border_color(app_state, FocusArea::Input)));
     f.render_widget(input, content_chunks[1]);
@@ -103,5 +102,3 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         ])
         .split(popup_layout[1])[1]
 }
-
-

@@ -13,6 +13,8 @@ pub struct AppState {
     pub output_log: Vec<String>,
     pub show_quit_modal: bool,
     pub selected_navigation_item: usize,
+    pub preview_content: String,
+    pub is_command_mode: bool,
 }
 
 impl Default for AppState {
@@ -23,8 +25,8 @@ impl Default for AppState {
             output_log: Vec::new(),
             show_quit_modal: false,
             selected_navigation_item: 0,
+            preview_content: String::new(),
+            is_command_mode: false,
         }
     }
 }
-
-
