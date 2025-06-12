@@ -10,6 +10,7 @@ use crate::core::app_state::{AppState, FocusArea};
 pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
     let navigation_items = [
         "Home",
+        "Image Tools",
         "Settings",
         "Local LLMs",
         "Help",

@@ -10,7 +10,7 @@ pub enum FocusArea {
 }
 
 /// The number of items in the navigation menu
-pub const NAVIGATION_ITEMS_COUNT: usize = 5;
+pub const NAVIGATION_ITEMS_COUNT: usize = 6;
 
 /// Represents the current state of the application
 pub struct AppState {
