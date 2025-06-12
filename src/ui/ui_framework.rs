@@ -5,7 +5,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::core::app_state::{AppState, FocusArea};
+use crate::core::app_state::AppState;
 use crate::ui::header::render_header;
 use crate::ui::footer::render_footer;
 use crate::ui::input::render_input;

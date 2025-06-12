@@ -1,3 +1,4 @@
+
 use crossterm::event::{KeyEvent, KeyCode, KeyModifiers};
 use super::app_state::AppState;
 
@@ -14,7 +15,8 @@ pub fn handle_key_event(app_state: &mut AppState, key: &KeyEvent) {
         }
         (KeyCode::Char('u'), m) if m.contains(KeyModifiers::CONTROL) => {
             // Clear from cursor to start (like in terminal)
-            app_state.input_buffer = app_state.input_buffer[app_state.cursor_position..].to_string();
+            let remaining = app_state.input_buffer[app_state.cursor_position..].to_string();
+            app_state.input_buffer = remaining;
             app_state.cursor_position = 0;
             update_preview_and_mode(app_state);
         }
@@ -73,25 +75,25 @@ pub fn handle_key_event(app_state: &mut AppState, key: &KeyEvent) {
         (KeyCode::Enter, _) => {
             // Handle command execution or input submission
             if app_state.is_command_mode {
-                handle_command(&mut app_state.preview_content, &app_state.input_buffer);
+                let preview_content = handle_command(&app_state.input_buffer);
+                app_state.update_preview(preview_content);
             }
-            // Store in output log
-            app_state.output_log.push(app_state.input_buffer.clone());
-            // Clear input after processing
-            app_state.input_buffer.clear();
-            app_state.cursor_position = 0;
-            app_state.is_command_mode = false;
+            // Log the input before clearing
+            app_state.log_output(app_state.input_buffer.clone());
+            // Reset input state
+            app_state.reset_input();
         }
         _ => {}
     }
 }
 
 fn update_preview(app_state: &mut AppState) {
-    app_state.preview_content = if app_state.is_command_mode {
+    let content = if app_state.is_command_mode {
         format!("Command: {}", app_state.input_buffer)
     } else {
         format!("Echo: {}", app_state.input_buffer)
     };
+    app_state.update_preview(content);
 }
 
 fn update_preview_and_mode(app_state: &mut AppState) {
@@ -101,12 +103,12 @@ fn update_preview_and_mode(app_state: &mut AppState) {
     update_preview(app_state);
 }
 
-fn handle_command(preview: &mut String, command: &str) {
+fn handle_command(command: &str) -> String {
     // Strip the leading '/' and handle commands
     let cmd = command.strip_prefix('/').unwrap_or(command);
-    *preview = match cmd {
+    match cmd {
         "help" => String::from("Available commands: /help, /clear"),
         "clear" => String::from(""),
         _ => format!("Unknown command: {}", cmd),
-    };
+    }
 }

@@ -11,7 +11,6 @@ use crate::core::app_state::{AppState, FocusArea};
 /// Renders an input field with cursor and styling
 pub fn render_input(f: &mut Frame, area: Rect, app_state: &AppState) {
     let input_focused = app_state.focus == FocusArea::Input;
-    let cursor_x = app_state.cursor_position;
 
     // Create text with visible cursor
     let input_line = if input_focused {

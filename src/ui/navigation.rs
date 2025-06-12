@@ -22,7 +22,7 @@ pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
         .collect();
 
     let mut list_state = ListState::default();
-    if app_state.focus == FocusArea::Navigation {
+         if app_state.has_focus(FocusArea::Navigation) {
         list_state.select(Some(app_state.selected_navigation_item));
     }
 
@@ -30,7 +30,7 @@ pub fn draw_navigation(f: &mut Frame, app_state: &mut AppState, area: Rect) {
         .block(Block::default()
             .title("Navigation")
             .borders(Borders::ALL)
-            .border_style(if app_state.focus == FocusArea::Navigation {
+            .border_style(     if app_state.has_focus(FocusArea::Navigation) {
                 Style::default().fg(Color::White)
             } else {
                 Style::default().fg(Color::DarkGray)
