@@ -8,9 +8,10 @@ use ratatui::{
 use crate::core::app_state::{AppState, FocusArea};
 use crate::ui::header::render_header;
 use crate::ui::footer::render_footer;
+use crate::ui::input::render_input;
 use crate::ui::navigation::draw_navigation;
 use crate::ui::preview::render_preview;
-use crate::ui::utils::{create_bordered_paragraph, centered_rect, create_modal_block};
+use crate::ui::utils::{centered_rect, create_modal_block};
 
 pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
     let area = f.area();
@@ -52,14 +53,8 @@ pub fn draw_ui(f: &mut Frame, app_state: &mut AppState) {
     // Render preview
     render_preview(f, content_chunks[0], app_state);
 
-    // Render input
-    let input = create_bordered_paragraph(
-        app_state.input_buffer.as_str(),
-        Some("Input"),
-        app_state,
-        FocusArea::Input,
-    );
-    f.render_widget(input, content_chunks[1]);
+    // Render input with cursor support
+    render_input(f, content_chunks[1], app_state);
 
     // Render footer
     render_footer(f, chunks[2], app_state);

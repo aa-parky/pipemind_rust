@@ -58,11 +58,11 @@ fn main() -> Result<(), io::Error> {
                             match key.code {
                                 KeyCode::Char('h') => {
                                     app_state.focus = match app_state.focus {
-                                        FocusArea::Header => FocusArea::Footer,
                                         FocusArea::Navigation => FocusArea::Header,
                                         FocusArea::Preview => FocusArea::Navigation,
                                         FocusArea::Footer => FocusArea::Preview,
-                                        _ => app_state.focus,
+                                        FocusArea::Header => FocusArea::Footer,
+                                        FocusArea::Input => app_state.focus, // Handle input case explicitly
                                     };
                                 }
                                 KeyCode::Char('l') => {
@@ -71,7 +71,7 @@ fn main() -> Result<(), io::Error> {
                                         FocusArea::Navigation => FocusArea::Preview,
                                         FocusArea::Preview => FocusArea::Footer,
                                         FocusArea::Footer => FocusArea::Header,
-                                        _ => app_state.focus,
+                                        FocusArea::Input => app_state.focus, // Handle input case explicitly
                                     };
                                 }
                                 KeyCode::Char('j') => {
@@ -84,7 +84,7 @@ fn main() -> Result<(), io::Error> {
                                             FocusArea::Navigation => FocusArea::Preview,
                                             FocusArea::Preview => FocusArea::Footer,
                                             FocusArea::Footer => FocusArea::Header,
-                                            _ => app_state.focus,
+                                            FocusArea::Input => app_state.focus, // Handle input case explicitly
                                         };
                                     }
                                 }
@@ -98,7 +98,7 @@ fn main() -> Result<(), io::Error> {
                                             FocusArea::Navigation => FocusArea::Header,
                                             FocusArea::Preview => FocusArea::Navigation,
                                             FocusArea::Footer => FocusArea::Preview,
-                                            _ => app_state.focus,
+                                            FocusArea::Input => app_state.focus, // Handle input case explicitly
                                         };
                                     }
                                 }
